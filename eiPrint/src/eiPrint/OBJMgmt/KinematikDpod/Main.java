@@ -12,6 +12,17 @@ public class Main {
      */
      public static void main(String[] args){
 
+
+         /**
+          * Vorläufige Werte unten aus der Main genommen.
+          *
+          * Kinematik.e =  Float.parseFloat(jTextField13.getText()); //end effector =145
+          * Kinematik.f =  Float.parseFloat(jTextField14.getText()); //base =480
+          * Kinematik.re =  Float.parseFloat(jTextField15.getText()); //lower arm = 300
+          * Kinematik.rf =  Float.parseFloat(jTextField16.getText()); //upper arm = 150
+          * 
+          */
+
      Kinematik DPOD = new Kinematik();
      DPOD.theta = 0;
      DPOD.theta1 = 30;
