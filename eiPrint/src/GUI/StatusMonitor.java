@@ -1,7 +1,10 @@
 
 package GUI;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -15,10 +18,11 @@ public class StatusMonitor {
 
     private HashMap<Integer,String> errorMSGMap;
 
+
     public StatusMonitor()
     {
-
         errorMSGMap = new HashMap<Integer,String>();
+        this.setMessageList();
     }
 
 
@@ -32,6 +36,37 @@ public class StatusMonitor {
      */
     private void setMessageList()
     {
+        int max = 3000;
+        int i;
+        String stringMax="";
+        String errorMessage="";
+        
+        try {
+            Properties prop = new Properties();
+            prop.load(new FileInputStream("eiPrintFMs.ini"));
+
+            stringMax =  prop.getProperty("maxErrorMessageCode");
+            if(stringMax!=null)
+            {
+                max=Integer.valueOf(stringMax).intValue();
+            }
+
+            for (i=0; i<=max; i++)
+            {
+                errorMessage=prop.getProperty(""+i+"");
+                if(errorMessage != null)
+                {
+                    this.errorMSGMap.put(i, errorMessage);
+                }
+            }
+
+            this.printAllMSGNumbers();
+        }
+        
+        catch (IOException ex)
+        {
+            ex.printStackTrace();
+        }
 
 
     }
@@ -47,6 +82,8 @@ public class StatusMonitor {
      */
     public String showState()
     {
+        
+
         return ("Muss noch programmiert werden");
     }
 
@@ -93,6 +130,8 @@ public class StatusMonitor {
             System.out.println(key);
         }
     }
+
+
 
 
 
