@@ -92,7 +92,8 @@ public class StatusMonitor {
 
     /**
      *
-     * Gion: Was soll diese Funktion machen?
+     * Soll alle Vorgänge der Maschine loggen
+     * Wird durch Gion gemacht.
      *
      */
     public void dataLogger()
