@@ -10,8 +10,7 @@ import java.util.Set;
 /**
  *
  * @author Ruedi Odermatt
- * @version 0.0.1
- * @comment dfsöadsflkjfds fsdöl kfsdjsdf
+ * @version 0.0.2
  *
  */
 public class StatusMonitor {
