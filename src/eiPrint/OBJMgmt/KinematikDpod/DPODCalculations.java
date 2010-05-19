@@ -375,6 +375,7 @@ public class DPODCalculations extends javax.swing.JFrame {
      DPOD.theta1 = 0;
      DPOD.theta2 = 0;
      DPOD.theta3 = 0;
+     //Die Werte x0,y0,z0 werden aus Textfeld eingelesen
      DPOD.x0 =  Float.parseFloat(jTextField7.getText());
      DPOD.y0 =  Float.parseFloat(jTextField8.getText());
      DPOD.z0 =  Float.parseFloat(jTextField9.getText());

@@ -33,9 +33,9 @@ public class Koordinatentransformation
 
     public Koordinatentransformation(double x, double y, double z)
     {
-        this.x=x;
-        this.y=y;
-        this.z=z;
+        this.x = x;
+        this.y = y;
+        this.z = z;
         //setHöhe(550);
         
     }
@@ -48,7 +48,6 @@ public class Koordinatentransformation
      */
     public void koordinatensystemDrehung()
     {
-
         //Zuerst wird das Koordinatensystem um 45° gedreht
         xrobot = x * Math.cos(winkel) + z * Math.sin(winkel);
         zrobot = (-1) * x *Math.sin(winkel) + z * Math.cos(winkel);
