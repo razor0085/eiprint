@@ -40,10 +40,7 @@ public class Point {
     public double getX() {
         return x;
     }
-    public double getPoint()
-    {
-        return  0.0;
-    }
+
     /**
      * @param x the x to set
      */
