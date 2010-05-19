@@ -12,6 +12,7 @@ import eiPrint.OBJMgmt.Util;
 import com.db4o.query.*;
 import com.db4o.ObjectSet;
 import com.db4o.ObjectContainer;
+import com.db4o.config.EmbeddedConfiguration;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,7 @@ public class Objektfile_einlesen extends Util {
     private double x,y,z=0;
     private Point point;
     private double [] pt;
+    private double xGes,yGes;
 
 /**
  * Konstruktor
@@ -46,7 +48,7 @@ public class Objektfile_einlesen extends Util {
     public Objektfile_einlesen(String pfad)
     {
 
-        //db = Db4o.openFile("C:/Users/david/Desktop/PREN/DB.yap");
+        db = Db4oEmbedded.openFile(createConfiguration(),"C:/Users/david/Desktop/PREN/DB.yap");
 
         point = new Point();
         ptmenge = new ArrayList<Point>();
@@ -134,32 +136,30 @@ public class Objektfile_einlesen extends Util {
 
     public void saveToDb()
     {
-        ObjectContainer db = Db4o.openFile("C:/Users/david/Desktop/PREN/DB.yap");
+
         try {
             // do something with db4o
            for(int i =0; i<ptmenge.size();i++){
                 db.store(new Point(ptmenge.get(i).getX(),ptmenge.get(i).getY()
                         ,ptmenge.get(i).getZ()));  // Hier wird das Objekt gespeichert 
-            System.out.println("Stored " + (ptmenge.get(i).getX()+" "+ptmenge.get(i).getY() +" " + ptmenge.get(i).getZ()));
+            System.out.println("Stored " + (ptmenge.get(i).getX()+" "+
+                    ptmenge.get(i).getY() +" " + ptmenge.get(i).getZ()));
            }
-           db.commit();
+           //db.commit();
         } finally {
-            db.close();
+            
         }
     }
 
-//    public Point getZballon()
-//    {
-////        if(ptmenge.get(i).getX()){
-////        return z;
-////        }
-//        List<Point> points = db.query(new Predicate<Point>() {
-//
-//            public boolean match(Point point) {
-//                return ((point.getX() == 100)&& point.getY()==100);
-//            }
-//        });
-//    }
+    private EmbeddedConfiguration createConfiguration()
+    {
+        EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
+        config.common().objectClass(Point.class).indexed(true);
+        config.common().objectClass(Point.class).objectField("x").indexed(true);
+        config.common().objectClass(Point.class).objectField("y").indexed(true);
+        config.common().objectClass(Point.class).objectField("z").indexed(true);
+        return config;
+    }
     /**
      * Sucht in der Db nach einem Punkt welcher die x,y-Koordinate möglichst
      * nahe bei null ist.
@@ -184,16 +184,31 @@ public class Objektfile_einlesen extends Util {
         listResult(result);
     }
 
-    public double getZkoordinate() {
+    public List<Point> getZkoordinate(double xGes, double yGes) {
+        this.xGes = xGes;
+        this.yGes = yGes;
         List<Point> result = db.query(new Predicate<Point>() {
-
             public boolean match(Point point) {
-                return point.getPoint() > 99 && point.getPoint() < 199;
-
+                return (point.getX() == Objektfile_einlesen.this.xGes &&
+                        point.getY() == Objektfile_einlesen.this.yGes);
             }
         });
-        return 0.0D;
+        return result;
     }
+
+    //    public Point getZballon()
+//    {
+////        if(ptmenge.get(i).getX()){
+////        return z;
+////        }
+//        List<Point> points = db.query(new Predicate<Point>() {
+//
+//            public boolean match(Point point) {
+//                return ((point.getX() == 100)&& point.getY()==100);
+//            }
+//        });
+//    }
+
     /**
      * @return the filename
      */
@@ -209,41 +224,35 @@ public class Objektfile_einlesen extends Util {
 
    public static void main(String[] args)
    {
-       //C:/Dokumente und Einstellungen/dave/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data
-       Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-       try{
-       o.fileEinlesen();
-       //o.saveToDb();
-       }catch(Exception e){
-           e.printStackTrace();
-       }
+//       //C:/Dokumente und Einstellungen/dave/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data
+//       Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+//       try{
+//       o.fileEinlesen();
+//       //o.saveToDb();
+//       }catch(Exception e){
+//           e.printStackTrace();
+//       }
 
-      
-
-       //############
-//
-//               Scanner scanner = new Scanner("Bla test /n" +
-//                "v 55.474472 120.473312 0/n " +
-//                "v 0.0 1.11 2.22 /n" + "# 2d texture coordinates (x,y): /n" + "vt 0.394984 0.815900 ");
-//
-//         // accessDb4o
-//        ObjectContainer db = Db4o.openFile("C:/Dokumente und Einstellungen/dave/" +
-//                "Desktop/PREN/DB.yap");
-//        try {
-//            // do something with db4o
-//            for(int i = 0; i<ptmenge.size();i++){
-//            db.set(ptmenge.get(i));
-//            System.out.println("Stored " + point);
-//            }
-//        } finally {
-//            db.close();
-//        }
-        // storeFirstPilot
-
-       
+      Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+       //ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+        try {
+            //o.fileEinlesen();
+           //o.saveToDb();
+          List<Point> lst =  o.getZkoordinate(170.233231,354.467102);
+           System.out.println(lst.size()); 
+           System.out.println(lst.get(0).getZ());
+        }
+        catch(Exception e){e.printStackTrace();}
+        finally {
+            
+        }
 
 
    }
 
-   
+   @Override
+   protected void finalize()
+   {
+       db.close();
+   }
 }
