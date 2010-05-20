@@ -57,7 +57,7 @@ public class Koordinatentransformation
         //yrobot = y + ty;
 
         zrobot = z + tz;
-
+        yrobot = y;
     }
     /**
      * @return the x
