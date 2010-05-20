@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  * @author dave
  */
 public class Objektfile_einlesen extends Util {
-    
+
     //Attribute
     private ObjectContainer db;
     //private Koordinatentransformation kt;
@@ -34,35 +34,34 @@ public class Objektfile_einlesen extends Util {
     private String filename;
     private FileReader fileIn;
     private ArrayList<Point> ptmenge; //Hällt alle Punkte des Druck Objekts
-    private double x,y,z=0;
+    private double xTmp, yTmp, zTmp;
     private Point point;
-    private double xGes,yGes;
+    private double xGes, yGes;
     private Kinematik DPOD;
     private int OK = 0;
-    private ArrayList  steps;
+    private ArrayList steps;
 
-
-/**
- * Konstruktor
- *
- * @param filename
- * @param pfad
- */
+    /**
+     * Konstruktor
+     *
+     * @param filename
+     * @param pfad
+     */
     @SuppressWarnings("empty-statement")
-    public Objektfile_einlesen(String pfad)
-    {
-
-        db = Db4oEmbedded.openFile(createConfiguration(),"C:/Users/david/Desktop/PREN/DB.yap");
+    public Objektfile_einlesen(String pfad) {
+        //x=y=z=0;
+        db = Db4oEmbedded.openFile(createConfiguration(), "C:/Users/david/Desktop/PREN/DB.yap");
         DPOD = new Kinematik();
         point = new Point();
         ptmenge = new ArrayList<Point>();
         this.pfad = pfad;
-        System.out.println(""+pfad);
+        System.out.println("" + pfad);
         DPOD.xx0 = 0;
         DPOD.yy0 = 0;
         DPOD.zz0 = 0;
-       // int OK = 0;
+        // int OK = 0;
         DPOD.theta1 = DPOD.theta2 = DPOD.theta3 = 0.0;
+        steps = new ArrayList();
         try {
             fileIn = new FileReader(pfad);
 
@@ -74,83 +73,68 @@ public class Objektfile_einlesen extends Util {
 
 
     }
+
     /**
      * Das .obj File wird eingelesen und in einen Arraylist abgespeichert.
      * @throws ClassNotFoundException
      */
     @SuppressWarnings("empty-statement")
-    public void fileEinlesen() throws ClassNotFoundException, IOException
-    {    
+    public void fileEinlesen() throws ClassNotFoundException, IOException {
         BufferedReader buff = new BufferedReader(fileIn);
         //Speichert den BufferInhalt temporär
         String zeile = "";
         //Lies bis nix mehr da ist (Rückgabewert = null statt String)
-        while ((zeile = buff.readLine()) != null)
-        {
+        while ((zeile = buff.readLine()) != null) {
             Scanner scanner = new Scanner(zeile);
-            if(zeile.startsWith("v ")  ){
-            //x ,y,z Koordinate isolieren, zaehler richtig nullen!!!       
-            int zaehler = 0;
-            while ((scanner.hasNext())) {
-                if (scanner.hasNextDouble()) {
-                    if (zaehler == 0) {
-                        x = scanner.nextDouble();
-                        //System.out.println(x);
-                        zaehler++;
-                    } else if (zaehler == 1) {
-                        y = scanner.nextDouble();
-                        zaehler++;
-                       // System.out.println(y);
-                    } else if (zaehler == 2) {
-                        z = scanner.nextDouble();
-                        zaehler=0;
-                        //System.out.println(z);
+            if (zeile.startsWith("v ")) {
+                //x ,y,z Koordinate isolieren, zaehler richtig nullen!!!
+                int zaehler = 0;
+                while ((scanner.hasNext())) {
+                    if (scanner.hasNextDouble()) {
+                        if (zaehler == 0) {
+                            xTmp = scanner.nextDouble();
+                            //System.out.println(x);
+                            zaehler++;
+                        } else if (zaehler == 1) {
+                            yTmp = scanner.nextDouble();
+                            zaehler++;
+                            // System.out.println(y);
+                        } else if (zaehler == 2) {
+                            zTmp = scanner.nextDouble();
+                            zaehler = 0;
+                            //System.out.println(z);
+                        }
+                    } else {
+                        scanner.next();
                     }
-                } else {
-                    scanner.next();
-                   }
-            }
-         //x,y,z transformieren
-         Koordinatentransformation kt = new Koordinatentransformation(x,y,z);
-         kt.koordinatensystemDrehung();
-        //koord in point schreiben, wenn kt.getX() übergeben wird werden die
-        //Werte unverändert in Db geschrieben, d.h. ohne Koordinatesystemdrehg.
-            point.setX(kt.getXrobot());
-            point.setY(kt.getYrobot());
-            point.setZ(kt.getZrobot());
-            ptmenge.add(new Point(x,y,z));
-           //System.out.println("ptmenge"+point);           
-            }
-            else{               
-                zeile+=buff.readLine();
+                }
+                //x,y,z transformieren
+                Koordinatentransformation kt = new Koordinatentransformation(xTmp, yTmp, zTmp);
+                kt.koordinatensystemDrehung();
+                //koord in point schreiben, wenn kt.getX() übergeben wird werden die
+                //Werte unverändert in Db geschrieben, d.h. ohne Koordinatesystemdrehg.
+                ptmenge.add(new Point(kt.getXrobot(), kt.getYrobot(), kt.getZrobot()));
+                //System.out.println("ptmenge"+point);
+            } else {
+                zeile += buff.readLine();
                 System.out.println("Kein v!!");
-            }      
+            }
         }
         //InputStream schliessen
-          buff.close();
-          fileIn.close();
-          saveToDb();
+        buff.close();
+        fileIn.close();
+        saveToDb();
     }
 
-    public void saveToDb()
-    {
-
-        try {
-            // do something with db4o
-           for(int i =0; i<ptmenge.size();i++){
-                db.store(new Point(ptmenge.get(i).getX(),ptmenge.get(i).getY()
-                        ,ptmenge.get(i).getZ()));  // Hier wird das Objekt gespeichert 
-            System.out.println("Stored " + (ptmenge.get(i).getX()+" "+
-                    ptmenge.get(i).getY() +" " + ptmenge.get(i).getZ()));
-           }
-           //db.commit();
-        } finally {
-            
+    public void saveToDb() {
+        for(Point p : ptmenge)
+        {
+            db.store(p);
+            System.out.println("Point stored: " +p);
         }
     }
 
-    private EmbeddedConfiguration createConfiguration()
-    {
+    private EmbeddedConfiguration createConfiguration() {
         EmbeddedConfiguration config = Db4oEmbedded.newConfiguration();
         config.common().objectClass(Point.class).indexed(true);
         config.common().objectClass(Point.class).objectField("x").indexed(true);
@@ -158,14 +142,15 @@ public class Objektfile_einlesen extends Util {
         config.common().objectClass(Point.class).objectField("z").indexed(true);
         return config;
     }
+
     /**
      * Sucht in der Db nach einem Punkt welcher die x,y-Koordinate möglichst
      * nahe bei null ist.
      * @return
      */
-    public List<Point> getOrigin()
-    {
+    public List<Point> getOrigin() {
         List<Point> result = db.query(new Predicate<Point>() {
+
             public boolean match(Point point) {
                 return (point.getX() == 0 &&
                         point.getY() == 0);
@@ -173,6 +158,7 @@ public class Objektfile_einlesen extends Util {
         });
         return result;
     }
+
     /**
      * Druckt alle punkte aus
      *
@@ -181,6 +167,7 @@ public class Objektfile_einlesen extends Util {
         ObjectSet result = db.get(Point.class);
         listResult(result);
     }
+
     /**
      * Sucht in der DB nach Punkten welche mit den übergebenen x und y
      * Koordinate übereinstimmen
@@ -192,15 +179,17 @@ public class Objektfile_einlesen extends Util {
         this.xGes = xGes;
         this.yGes = yGes;
         List<Point> result = db.query(new Predicate<Point>() {
+
             public boolean match(Point point) {
                 return (point.getX() < (Objektfile_einlesen.this.xGes + 0.1) &&
                         point.getX() > (Objektfile_einlesen.this.xGes - 0.1) &&
                         point.getY() < (Objektfile_einlesen.this.yGes + 0.1) &&
-                        point.getY() > (Objektfile_einlesen.this.yGes - 0.1)) ;
+                        point.getY() > (Objektfile_einlesen.this.yGes - 0.1));
             }
         });
         return result;
     }
+
     /**
      * Diese Methode erwartet die Koordinaten eines Punktes im Raum und
      * berechnet wieviele Steps welcher Motor drehen muss
@@ -208,30 +197,32 @@ public class Objektfile_einlesen extends Util {
      * @param y
      * @param z
      */
-    public void getSteps(double x, double y, double z)
-    {
-        int stepsMotor1,stepsMotor2,stepsMotor3;
+    public void getSteps(double x, double y, double z,int color) {
+        int stepsMotor1, stepsMotor2, stepsMotor3;
         //Dpod erwarted floats
         DPOD.x0 = x;
         DPOD.y0 = y;
         DPOD.z0 = z;
         OK = DPOD.delta_calcInverse(DPOD);
-        stepsMotor1= (int) ((DPOD.theta1) / 0.9);
-        stepsMotor2= (int) ((DPOD.theta2) / 0.9);
-        stepsMotor3= (int) ((DPOD.theta3) / 0.9);
+        stepsMotor1 = (int) ((DPOD.theta1) / 0.9);
+        stepsMotor2 = (int) ((DPOD.theta2) / 0.9);
+        stepsMotor3 = (int) ((DPOD.theta3) / 0.9);
         steps.add(stepsMotor1);
         steps.add(stepsMotor2);
         steps.add(stepsMotor3);
+        steps.add(color);
         System.out.println(stepsMotor1);
         System.out.println(stepsMotor2);
         System.out.println(stepsMotor3);
     }
+
     /**
      * @return the filename
      */
     public String getFilename() {
         return filename;
     }
+
     /**
      * @param filename the filename to set
      */
@@ -239,35 +230,32 @@ public class Objektfile_einlesen extends Util {
         this.filename = filename;
     }
 
-   @Override
-   protected void finalize()
-   {
-       db.close();
-   }
+    @Override
+    protected void finalize() {
+        db.close();
+    }
 
-   public static void main(String[] args)
-   {
+    public static void main(String[] args) {
 
-      Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-       //ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+        Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+        //ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
         try {
-            //o.fileEinlesen();
-            //o.saveToDb();
+            o.fileEinlesen();
+            o.saveToDb();
             //Startpunkt suchen
             //o.getOrigin().get(0);
             //Startpunkt übergeben
-            List<Point> lst = o.getZkoordinate(170.233231, 354.467102);
-            System.out.println(lst.size());
-            System.out.println(lst.get(0).getZ());
+           // List<Point> lst = o.getZkoordinate(170.233231, 354.467102);
+          //  System.out.println(lst.size());
+            //System.out.println(lst.get(0).getZ());
             //Umrechnung in Schritte
             //Kinematik DPOD = new Kinematik();
-            //o.getSteps(x, y, z);
+           // o.getSteps(0, 0, lst.get(0).getZ(),0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
         }
-        catch(Exception e){e.printStackTrace();}
-        finally {
-        }
 
 
-   }
-
+    }
 }
