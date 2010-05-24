@@ -147,8 +147,4 @@ public int delta_calcAngleYZ(Kinematik DPOD)
      return status;
  }
 
-
-
-
-
 }
