@@ -14,6 +14,7 @@ import com.db4o.ObjectSet;
 import com.db4o.ObjectContainer;
 import com.db4o.config.EmbeddedConfiguration;
 import eiPrint.OBJMgmt.KinematikDpod.Kinematik;
+import eiPrint.OBJMgmt.DateiUmbenennen;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +50,6 @@ public class Objektfile_einlesen extends Util {
      */
     @SuppressWarnings("empty-statement")
     public Objektfile_einlesen(String pfad) {
-        //x=y=z=0;
         db = Db4oEmbedded.openFile(createConfiguration(), "C:/Users/david/Desktop/PREN/DB.yap");
         DPOD = new Kinematik();
         point = new Point();
@@ -64,14 +64,9 @@ public class Objektfile_einlesen extends Util {
         steps = new ArrayList();
         try {
             fileIn = new FileReader(pfad);
-
-
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Objektfile_einlesen.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-
-
     }
 
     /**
@@ -236,25 +231,36 @@ public class Objektfile_einlesen extends Util {
     }
 
     public static void main(String[] args) {
+//C:\Users\david\Desktop\PREN\eiPrint\src\eiPrint\OBJMgmt\data
+//C:\Users\david\Desktop\PREN\eiPrint\src\eiPrint\OBJMgmt\data
 
-        Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-        //ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-        try {
-            o.fileEinlesen();
-            o.saveToDb();
-            //Startpunkt suchen
+
+
+//       DateiUmbenennen rename = new DateiUmbenennen();
+//       rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
+       Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/max.txt");
+//        ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
+//
+//147.253174 113.367676 174.822464
+
+
+       //        try {
+           // o.fileEinlesen();
+            //o.saveToDb();
+           // Startpunkt suchen
             //o.getOrigin().get(0);
             //Startpunkt übergeben
-           // List<Point> lst = o.getZkoordinate(170.233231, 354.467102);
-          //  System.out.println(lst.size());
-            //System.out.println(lst.get(0).getZ());
+//             List<Point> lst = o.getZkoordinate(-182.9859, 0.2033183);
+//            System.out.println(lst.size());
+//            System.out.println(lst.get(0).getZ());
             //Umrechnung in Schritte
-            //Kinematik DPOD = new Kinematik();
-           // o.getSteps(0, 0, lst.get(0).getZ(),0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-        }
+//            Kinematik DPOD = new Kinematik();
+             //o.getSteps(-182.985950833094342, 0.2033183, lst.get(0).getZ(),0);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } finally {
+//        }
 
 
     }

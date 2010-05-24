@@ -49,14 +49,14 @@ public class Koordinatentransformation
     public void koordinatensystemDrehung()
     {
         //Zuerst wird das Koordinatensystem um 45° gedreht
-        xrobot = x * Math.cos(winkel) + z * Math.sin(winkel);
-        zrobot = (-1) * x *Math.sin(winkel) + z * Math.cos(winkel);
+        xrobot = ((x * Math.cos(winkel)) + (z * Math.sin(winkel)));
+        zrobot = (((-1) * x *Math.sin(winkel)) +( z * Math.cos(winkel)));
         //Dann wird es um Vektor t(0,ty,tz) veschoben, x bleibt unberändert
         // in y wird nicht mehr verschoben, durch neuem Release muss Nullpunkt
-        //nur in Z-Richtung verschoben werden
+        // nur in Z-Richtung verschoben werden
         //yrobot = y + ty;
 
-        zrobot = z + tz;
+        zrobot =  tz - z;
         yrobot = y;
     }
     /**
