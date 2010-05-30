@@ -19,11 +19,11 @@ public class Koordinatentransformation
     private double xrobot;
     private double yrobot;
     private double zrobot;
-    private double winkel = 45.0D;
-    // höhe von Nullpos entsprichte tz
-    private double tz = 550.0D;
+    private static final double WINKEL = -(45.0D);
+    // höhe von Nullpos entsprichte tz höhe des Stifts(MaschinenNullpunkt) in mm
+    private static final double tz = 470.0D;
     //Ansicht von Vorne Laser auf meiner Seite, 70/2
-    private double ty = 35.0D; //entspricht ty
+    private static final double ty = 90.0D; //entspricht ty in mm
 
 
     public Koordinatentransformation()
@@ -35,9 +35,7 @@ public class Koordinatentransformation
     {
         this.x = x;
         this.y = y;
-        this.z = z;
-        //setHöhe(550);
-        
+        this.z = z;        
     }
 
     /**
@@ -49,15 +47,13 @@ public class Koordinatentransformation
     public void koordinatensystemDrehung()
     {
         //Zuerst wird das Koordinatensystem um 45° gedreht
-        xrobot = ((x * Math.cos(winkel)) + (z * Math.sin(winkel)));
-        zrobot = (((-1) * x *Math.sin(winkel)) +( z * Math.cos(winkel)));
-        //Dann wird es um Vektor t(0,ty,tz) veschoben, x bleibt unberändert
-        // in y wird nicht mehr verschoben, durch neuem Release muss Nullpunkt
-        // nur in Z-Richtung verschoben werden
+         xrobot = ((z * Math.sin(WINKEL)) + (x * Math.cos(WINKEL)) );
+         zrobot = (( z * Math.cos(WINKEL)) - ( x *Math.sin(WINKEL)) );
+        //Dann wird es um Vektor t(tx,ty,tz) veschoben
         //yrobot = y + ty;
-
-        zrobot =  tz - z;
         yrobot = y;
+        //zrobot = zrobot-tz;
+        
     }
     /**
      * @return the x
@@ -135,24 +131,14 @@ public class Koordinatentransformation
      * @return the winkel
      */
     public double getWinkel() {
-        return winkel;
+        return WINKEL;
     }
-    /**
-     * @param winkel the winkel to set
-     */
-    public void setWinkel(double winkel) {
-        this.winkel = winkel;
-    }
+  
     /**
      * @return the höhe
      */
     public double getHöhe() {
         return tz;
     }
-    /**
-     * @param höhe the höhe to set
-     */
-    public void setHöhe(double höhe) {
-        this.tz = höhe;
-    }
+
 }

@@ -168,7 +168,7 @@ public class Objektfile_einlesen extends Util {
      * Koordinate übereinstimmen
      * @param xGes
      * @param yGes
-     * @return Liste aller übereinstimmenden Punkte
+     * @return Liste aller übereinstimmenden Punkte mit 0.2mm Tolleranz
      */
     public List<Point> getZkoordinate(double xGes, double yGes) {
         this.xGes = xGes;
@@ -244,23 +244,23 @@ public class Objektfile_einlesen extends Util {
 //147.253174 113.367676 174.822464
 
 
-       //        try {
+               try {
            // o.fileEinlesen();
             //o.saveToDb();
            // Startpunkt suchen
-            //o.getOrigin().get(0);
+            o.getOrigin().get(0);
             //Startpunkt übergeben
-//             List<Point> lst = o.getZkoordinate(-182.9859, 0.2033183);
-//            System.out.println(lst.size());
-//            System.out.println(lst.get(0).getZ());
+             //List<Point> lst = o.getZkoordinate(-182.9859, 0.2033183);
+            //System.out.println(lst.size());
+            //System.out.println(lst.get(0).getZ());
             //Umrechnung in Schritte
-//            Kinematik DPOD = new Kinematik();
-             //o.getSteps(-182.985950833094342, 0.2033183, lst.get(0).getZ(),0);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//        }
+            //Kinematik DPOD = new Kinematik();
+            // o.getSteps(-182.985950833094342, 0.2033183, lst.get(0).getZ(),0);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
 
 
     }
