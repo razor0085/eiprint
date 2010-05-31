@@ -56,9 +56,9 @@ public class Objektfile_einlesen extends Util {
         ptmenge = new ArrayList<Point>();
         this.pfad = pfad;
         System.out.println("" + pfad);
-        DPOD.xx0 = 0;
-        DPOD.yy0 = 0;
-        DPOD.zz0 = 0;
+//        DPOD.xx0 = 0;
+//        DPOD.yy0 = 0;
+//        DPOD.zz0 = 0;
         // int OK = 0;
         DPOD.theta1 = DPOD.theta2 = DPOD.theta3 = 0.0;
         steps = new ArrayList();
@@ -147,8 +147,10 @@ public class Objektfile_einlesen extends Util {
         List<Point> result = db.query(new Predicate<Point>() {
 
             public boolean match(Point point) {
-                return (point.getX() == 0 &&
-                        point.getY() == 0);
+                return (point.getX() < (0 + 0.1) &&
+                        point.getX() > (0 - 0.1) &&
+                        point.getY() < (0 + 0.1) &&
+                        point.getY() > (0 - 0.1));
             }
         });
         return result;
@@ -236,19 +238,21 @@ public class Objektfile_einlesen extends Util {
 
 
 
-//       DateiUmbenennen rename = new DateiUmbenennen();
-//       rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
-       Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/max.txt");
+      // DateiUmbenennen rename = new DateiUmbenennen();
+       //rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
+       Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt");
 //        ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
 //
 //147.253174 113.367676 174.822464
 
 
                try {
-           // o.fileEinlesen();
+            //o.fileEinlesen();
             //o.saveToDb();
            // Startpunkt suchen
-            o.getOrigin().get(0);
+           System.out.println( o.getOrigin().get(0));
+           //Point: 0.0034228569986112234 0.001378 291.4954994853929
+
             //Startpunkt übergeben
              //List<Point> lst = o.getZkoordinate(-182.9859, 0.2033183);
             //System.out.println(lst.size());

@@ -9,10 +9,10 @@ public class Kinematik {
 
  //Constants
  // robot geometry
- public static double e = 115.0;     // end effector
- public static double f = 457.3;     // base
- public static double re = 232.0;    //lower arm
- public static double rf = 112.0;    //upper arm
+ public static double e = 145.0;     // end effector
+ public static double f = 480.0;     // base
+ public static double re = 300.0;    //lower arm
+ public static double rf = 150.0;    //upper arm
  // trigonometric constants
  private static final double sqrt3 = Math.sqrt(3.0);
  private static final double pi = 3.141592653;    // PI
