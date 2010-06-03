@@ -196,6 +196,7 @@ public class Objektfile_einlesen extends Util {
      */
     public void getSteps(double x, double y, double z,int color) {
         int stepsMotor1, stepsMotor2, stepsMotor3;
+        int write = 1 ;
         //Dpod erwarted floats
         DPOD.x0 = x;
         DPOD.y0 = y;
@@ -208,10 +209,12 @@ public class Objektfile_einlesen extends Util {
         steps.add(stepsMotor2);
         steps.add(stepsMotor3);
         steps.add(color);
+        steps.add(write);
         System.out.println(stepsMotor1);
         System.out.println(stepsMotor2);
         System.out.println(stepsMotor3);
     }
+
 
     /**
      * @return the filename
@@ -235,18 +238,12 @@ public class Objektfile_einlesen extends Util {
     public static void main(String[] args) {
 //C:\Users\david\Desktop\PREN\eiPrint\src\eiPrint\OBJMgmt\data
 //C:\Users\david\Desktop\PREN\eiPrint\src\eiPrint\OBJMgmt\data
-
-
-
       // DateiUmbenennen rename = new DateiUmbenennen();
        //rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
        Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt");
 //        ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-//
 //147.253174 113.367676 174.822464
-
-
-               try {
+      try {
             //o.fileEinlesen();
             //o.saveToDb();
            // Startpunkt suchen
@@ -259,7 +256,7 @@ public class Objektfile_einlesen extends Util {
             //System.out.println(lst.get(0).getZ());
             //Umrechnung in Schritte
             //Kinematik DPOD = new Kinematik();
-            // o.getSteps(-182.985950833094342, 0.2033183, lst.get(0).getZ(),0);
+             o.getSteps(0.0034228569986112234, 0.001378, 291.4954994853929,1);
 
         } catch (Exception e) {
             e.printStackTrace();
