@@ -51,8 +51,8 @@ public class Koordinatentransformation
          zrobot = (( z * Math.cos(WINKEL)) - ( x *Math.sin(WINKEL)) );
         //Dann wird es um Vektor t(tx,ty,tz) veschoben
         //yrobot = y + ty;
-        yrobot = y;
-        //zrobot = zrobot-tz;
+        yrobot = y-ty;
+        zrobot = zrobot-tz;
         
     }
     /**

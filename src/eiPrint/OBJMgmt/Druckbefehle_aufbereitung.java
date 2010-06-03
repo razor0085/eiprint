@@ -1,6 +1,7 @@
 
 package eiPrint.OBJMgmt;
 
+import eiPrint.OBJMgmt.KinematikDpod.Kinematik;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -20,6 +21,10 @@ public class Druckbefehle_aufbereitung {
     private ArrayList Xsujet;
     private ArrayList Ysujet;
     private ArrayList colorPrint;
+    private double xGes, yGes;
+    private Kinematik DPOD;
+    private int OK = 0;
+    private ArrayList steps;
 
     /**
      *
@@ -115,6 +120,42 @@ public class Druckbefehle_aufbereitung {
             System.out.println();
          }
      }
+
+        /**
+     * Diese Methode erwartet die Koordinaten eines Punktes im Raum und
+     * berechnet wieviele Steps welcher Motor drehen muss
+     * @param x
+     * @param y
+     * @param z
+     */
+    public void getSteps(double x, double y, double z,int color) {
+        int stepsMotor1, stepsMotor2, stepsMotor3;
+        int write = 1 ;
+        //Dpod erwarted floats
+        DPOD.x0 = x;
+        DPOD.y0 = y;
+        DPOD.z0 = z;
+        OK = DPOD.delta_calcInverse(DPOD);
+        stepsMotor1 = (int) ((DPOD.theta1) / 0.9);
+        stepsMotor2 = (int) ((DPOD.theta2) / 0.9);
+        stepsMotor3 = (int) ((DPOD.theta3) / 0.9);
+        steps.add(stepsMotor1);
+        steps.add(stepsMotor2);
+        steps.add(stepsMotor3);
+        steps.add(color);
+        steps.add(write);
+        System.out.println(stepsMotor1);
+        System.out.println(stepsMotor2);
+        System.out.println(stepsMotor3);
+    }
+
+    public void generiereDruckdaten()
+    {
+        for(int i=0; i<Xsujet.size();i++)
+        {
+           
+        }
+    }
 
      
 
