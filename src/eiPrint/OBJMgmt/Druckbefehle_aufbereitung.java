@@ -18,9 +18,10 @@ import java.util.logging.Logger;
 public class Druckbefehle_aufbereitung {
     private FileReader fileIn;
     private String pfad;
-    private ArrayList Xsujet;
-    private ArrayList Ysujet;
-    private ArrayList colorPrint;
+    private ArrayList<Double> Xsujet;
+    private ArrayList<Double> Ysujet;
+    private ArrayList<Integer> colorPrint;
+    private ArrayList<Integer> write;
     private double xGes, yGes;
     private Kinematik DPOD;
     private int OK = 0;
@@ -32,9 +33,11 @@ public class Druckbefehle_aufbereitung {
      */
     public Druckbefehle_aufbereitung(String pfad)
     {
-        Xsujet = new ArrayList();
-        Ysujet = new ArrayList();
-        colorPrint = new ArrayList();
+       // super("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt","");
+        Xsujet = new ArrayList<Double>();
+        Ysujet = new ArrayList<Double>();
+        colorPrint = new ArrayList<Integer>();
+        write = new ArrayList<Integer>();
         this.pfad = pfad ;
         try {
             fileIn = new FileReader(pfad);
@@ -50,6 +53,8 @@ public class Druckbefehle_aufbereitung {
      * @throws IOException
      */
     public void sujetEinlesen() throws IOException {
+        ArrayList<Double> xTmp = new ArrayList<Double>();
+        ArrayList<Double> yTmp = new ArrayList<Double>();
         BufferedReader buff = new BufferedReader(fileIn);
         //Speichert den BufferInhalt temporär
         String zeile = "";
@@ -62,26 +67,25 @@ public class Druckbefehle_aufbereitung {
                 int count = 0;
                 
                while ((scanner.hasNext())) {
-                if (scanner.hasNextInt()) {
+                if (scanner.hasNextDouble()) {
 
                     if (count == 0) {
                         //speichere x-Koord
-                        Xsujet.add(scanner.nextInt());
+                        xTmp.add(scanner.nextDouble());
                         count++;
                         //System.out.println(Xsujet.get(i));
                     }
                     if (count == 1) {
-                        Ysujet.add(scanner.nextInt());
+                        yTmp.add(scanner.nextDouble());
                         count++;
                         //System.out.println(Ysujet.get(i));
                     }
                     if (count == 2) {
                         colorPrint.add(scanner.nextInt());
-                        colorPrint.add(scanner.nextInt());
+                        write.add(scanner.nextInt());
 //                        System.out.println(colorPrint.get(i));
 //                        System.out.println(colorPrint.get(i+1));
 //                        ++i;
-
                     } else {
                         //scanner.next();
                     }
@@ -90,13 +94,15 @@ public class Druckbefehle_aufbereitung {
                     count = 0;
                 }
             }
-
             } else {
                 zeile += buff.readLine();
-                System.out.println("Neue Zeile");
+                //System.out.println("Neue Zeile");
             }
         }
-
+        for(int i=0;i<Xsujet.size();i++){
+            Xsujet.add((xTmp.get(i+1)-xTmp.get(i)));
+            Ysujet.add((yTmp.get(i+1)-yTmp.get(i)));
+        }
     }
 
 
@@ -116,63 +122,36 @@ public class Druckbefehle_aufbereitung {
             System.out.print("Color an Write: ");
             System.out.print(colorPrint.get(i));
             System.out.print(" ");
-            System.out.print(colorPrint.get(i+1));
+            System.out.print(write.get(i));
             System.out.println();
          }
      }
 
-        /**
-     * Diese Methode erwartet die Koordinaten eines Punktes im Raum und
-     * berechnet wieviele Steps welcher Motor drehen muss
-     * @param x
-     * @param y
-     * @param z
-     */
-    public void getSteps(double x, double y, double z,int color) {
-        int stepsMotor1, stepsMotor2, stepsMotor3;
-        int write = 1 ;
-        //Dpod erwarted floats
-        DPOD.x0 = x;
-        DPOD.y0 = y;
-        DPOD.z0 = z;
-        OK = DPOD.delta_calcInverse(DPOD);
-        stepsMotor1 = (int) ((DPOD.theta1) / 0.9);
-        stepsMotor2 = (int) ((DPOD.theta2) / 0.9);
-        stepsMotor3 = (int) ((DPOD.theta3) / 0.9);
-        steps.add(stepsMotor1);
-        steps.add(stepsMotor2);
-        steps.add(stepsMotor3);
-        steps.add(color);
-        steps.add(write);
-        System.out.println(stepsMotor1);
-        System.out.println(stepsMotor2);
-        System.out.println(stepsMotor3);
-    }
 
-    public void generiereDruckdaten()
-    {
-        for(int i=0; i<Xsujet.size();i++)
-        {
-           
+//    public void generiereDruckdaten()
+//    {
+//        for(int i=0; i<Xsujet.size();i++)
+//        {
+//             getSteps(Xsujet.get(i), Ysujet.get(i), (getZkoordinate(Xsujet.get(i),Ysujet.get(i)).get(0).getZ()),1);
+//        }
+//    }
+
+
+
+  
+    public static void main(String[] args) {
+
+        Druckbefehle_aufbereitung d = new Druckbefehle_aufbereitung("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
+        try {
+            d.sujetEinlesen();
+            System.out.println("success!!!");
+            d.printArrayLists();
+        } catch (IOException ex) {
+            Logger.getLogger(Druckbefehle_aufbereitung.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
 
-     
-
-
-     /**
-      *
-      * @param args
-      * @throws IOException
-      * @throws ClassNotFoundException
-      */
-     public static void main(String[] args) throws IOException, ClassNotFoundException
-{
-
-    Druckbefehle_aufbereitung d = new Druckbefehle_aufbereitung("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
-    d.sujetEinlesen();
-    d.printArrayLists();
-}
 
 
 }
