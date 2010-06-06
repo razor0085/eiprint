@@ -40,7 +40,7 @@ public class Objektfile_einlesen extends Util {
     private double xGes, yGes;
     private Kinematik DPOD;
     private int OK = 0;
-    private ArrayList steps;
+    private ArrayList<Integer> steps;
     //from aufbereitung
     private ArrayList<Double> Xsujet;
     private ArrayList<Double> Ysujet;
