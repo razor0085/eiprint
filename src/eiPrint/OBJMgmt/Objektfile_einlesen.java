@@ -312,18 +312,18 @@ public class Objektfile_einlesen extends Util {
         }
     }
     
-     public void generiereDruckdaten()
+     public void generiereDruckdaten(double xStart,double yStart, double zStart)
     {
-        double xStart = 0.0;
-        double yStart = 0.0;
-        double zStart = 0.0;
+//        double xStart = 0.0;
+//        double yStart = 0.0;
+//        double zStart = 0.0;
          
         for(int i=0; i<Xsujet.size();i++)
         {
              getSteps(xStart+Xsujet.get(i), yStart+Ysujet.get(i), zStart+(getZkoordinate(Xsujet.get(i),Ysujet.get(i)).get(0).getZ()),1);
              xStart = xStart+Xsujet.get(i);
              yStart = yStart+Ysujet.get(i);
-             zStart = zStart+(getZkoordinate(Xsujet.get(i),Ysujet.get(i)).get(0).getZ());
+             zStart = zStart+(getZkoordinate(xStart+Xsujet.get(i),yStart+ Ysujet.get(i)).get(0).getY());
         }
     }
 
@@ -389,6 +389,7 @@ public class Objektfile_einlesen extends Util {
 //            System.out.println("success2!!!");
 //            o.generiereDruckdaten();
 //            System.out.println("success3!!!");
+            o.generiereDruckdaten(o.getOrigin().get(0).getX(), o.getOrigin().get(0).getY(), o.getOrigin().get(0).getZ());
 //        } catch (IOException ex) {
 //            Logger.getLogger(Druckbefehle_aufbereitung.class.getName()).log(Level.SEVERE, null, ex);
 //        }
