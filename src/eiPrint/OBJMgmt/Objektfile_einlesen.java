@@ -48,8 +48,8 @@ public class Objektfile_einlesen extends Util {
     private ArrayList<Integer> write;
     //private String sujet;
     private FileReader fileInSujet;
-    ArrayList<Double> xTemp ;
-    ArrayList<Double> yTemp ;
+    private ArrayList<Double> xTemp ;
+    private ArrayList<Double> yTemp ;
     /**
      * Konstruktor
      *
@@ -69,7 +69,7 @@ public class Objektfile_einlesen extends Util {
 //        DPOD.zz0 = 0;
         // int OK = 0;
         DPOD.theta1 = DPOD.theta2 = DPOD.theta3 = 0.0;
-        steps = new ArrayList();
+        steps = new ArrayList<Integer>();
 
         Xsujet = new ArrayList<Double>();
         Ysujet = new ArrayList<Double>();
@@ -77,10 +77,9 @@ public class Objektfile_einlesen extends Util {
         write = new ArrayList<Integer>();
         xTemp = new ArrayList<Double>();
         yTemp = new ArrayList<Double>();
-
         try {
-            fileIn = new FileReader(pfad);
-            fileInSujet = new FileReader(sujet);
+            fileIn = new FileReader(pfad); //.obj file
+            fileInSujet = new FileReader(sujet);// sujet.txt file
         } catch (FileNotFoundException ex) {
             Logger.getLogger(Objektfile_einlesen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -163,6 +162,7 @@ public class Objektfile_einlesen extends Util {
      * @return
      */
     public List<Point> getOrigin() {
+        
         List<Point> result = db.query(new Predicate<Point>() {
 
             public boolean match(Point point) {
@@ -203,6 +203,7 @@ public class Objektfile_einlesen extends Util {
                         point.getY() > (Objektfile_einlesen.this.yGes - 0.1));
             }
         });
+
         return result;
     }
 
@@ -318,12 +319,15 @@ public class Objektfile_einlesen extends Util {
 //        double yStart = 0.0;
 //        double zStart = 0.0;
          
-        for(int i=0; i<Xsujet.size();i++)
+        for(int i=0; i<Xsujet.size()-1;i++)
         {
-             getSteps(xStart+Xsujet.get(i), yStart+Ysujet.get(i), zStart+(getZkoordinate(Xsujet.get(i),Ysujet.get(i)).get(0).getZ()),1);
+            double zTemp;
+            //zugehörige z-Koordinate auf bedruckbares Objekt finden
+             zTemp = getZkoordinate(Xsujet.get(i), Xsujet.get(i)).get(i).getZ();
+             getSteps((xStart+Xsujet.get(i)), (yStart+Ysujet.get(i)), (zStart+zTemp),1);
              xStart = xStart+Xsujet.get(i);
              yStart = yStart+Ysujet.get(i);
-             zStart = zStart+(getZkoordinate(xStart+Xsujet.get(i),yStart+ Ysujet.get(i)).get(0).getY());
+             zStart = zStart+(getZkoordinate(xStart+Xsujet.get(i),yStart+ Ysujet.get(i))).get(i).getZ();
         }
     }
 
@@ -349,6 +353,10 @@ public class Objektfile_einlesen extends Util {
             System.out.println();
          }
      }
+    public ArrayList<Integer> getStepsArray()
+    {
+        return steps;
+    }
 
     public static void main(String[] args) {
 //C:\Users\david\Desktop\PREN\eiPrint\src\eiPrint\OBJMgmt\data
@@ -356,12 +364,12 @@ public class Objektfile_einlesen extends Util {
         //C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt
       // DateiUmbenennen rename = new DateiUmbenennen();
        //rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
-      Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt","C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
+      
 //        ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
 //147.253174 113.367676 174.822464
      // try {
-            //o.fileEinlesen();
-            //o.saveToDb();
+//            o.fileEinlesen();
+//            o.saveToDb();
            // Startpunkt suchen
            //System.out.println( o.getOrigin().get(0));
            //Point: 0.0034228569986112234 0.001378 291.4954994853929
@@ -380,19 +388,18 @@ public class Objektfile_einlesen extends Util {
 //        }
        //Druckbefehle_aufbereitung d = new Druckbefehle_aufbereitung("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
         try {
-            System.out.println( o.getOrigin().get(0));
-            Kinematik DPOD = new Kinematik();
-            o.getSteps(0.0034228569986112234, 0.001378, 291.4954994853929,1);
-//            o.sujetEinlesen();
-//            System.out.println("success1!!!");
-//            o.printArrayLists();
-//            System.out.println("success2!!!");
-//            o.generiereDruckdaten();
-//            System.out.println("success3!!!");
+            Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt","C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
+//            System.out.println( o.getOrigin().get(0));
+            //o.getOrigin().get(0).getX();
+           System.out.println( o.getOrigin().get(0));
+           System.out.println();
+//            Kinematik DPOD = new Kinematik();
+           // o.getSteps(0.0034228569986112234, 0.001378, 291.4954994853929,1);
+            //o.fileEinlesen();
+            //o.saveToDb();
+            o.sujetEinlesen();
             o.generiereDruckdaten(o.getOrigin().get(0).getX(), o.getOrigin().get(0).getY(), o.getOrigin().get(0).getZ());
-//        } catch (IOException ex) {
-//            Logger.getLogger(Druckbefehle_aufbereitung.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+            o.printArrayLists();
         }catch (Exception e){
           e.printStackTrace();
       }
