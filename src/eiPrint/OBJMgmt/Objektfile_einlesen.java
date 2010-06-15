@@ -4,8 +4,7 @@
  */
 package eiPrint.OBJMgmt;
 
-import com.db4o.Db4o;
-import java.io.File;
+
 import com.db4o.*;
 //import com.db4o.f1.*;
 //import eiPrint.OBJMgmt.Util;
@@ -96,7 +95,7 @@ public class Objektfile_einlesen extends Util {
         BufferedReader buff = new BufferedReader(fileIn);
         //Speichert den BufferInhalt temporär
         String zeile = "";
-        //Lies bis nix mehr da ist (Rückgabewert = null statt String)
+        //Lies bis nichts mehr da ist (Rückgabewert = null statt String)
         while ((zeile = buff.readLine()) != null) {
             Scanner scanner = new Scanner(zeile);
             if (zeile.startsWith("v ")) {
@@ -197,12 +196,17 @@ public class Objektfile_einlesen extends Util {
         List<Point> result = db.query(new Predicate<Point>() {
 
             public boolean match(Point point) {
-                return (point.getX() < (Objektfile_einlesen.this.xGes + 0.1) &&
-                        point.getX() > (Objektfile_einlesen.this.xGes - 0.1) &&
-                        point.getY() < (Objektfile_einlesen.this.yGes + 0.1) &&
-                        point.getY() > (Objektfile_einlesen.this.yGes - 0.1));
+                return (point.getX() < (Objektfile_einlesen.this.xGes + 0.2) &&
+                        point.getX() > (Objektfile_einlesen.this.xGes - 0.2) &&
+                        point.getY() < (Objektfile_einlesen.this.yGes + 0.2) &&
+                        point.getY() > (Objektfile_einlesen.this.yGes - 0.2));
             }
         });
+        if(result.size() <= 0){
+            result = new ArrayList<Point>();
+            result.add(new Point(0, 0, 0));
+            //result.add(new Point(0.0, 0.0, 0.0));
+        }
 
         return result;
     }
@@ -318,16 +322,18 @@ public class Objektfile_einlesen extends Util {
 //        double xStart = 0.0;
 //        double yStart = 0.0;
 //        double zStart = 0.0;
-         
+         Point pt = null;
         for(int i=0; i<Xsujet.size()-1;i++)
         {
-            double zTemp;
+            double zTemp =0.0;
+            
             //zugehörige z-Koordinate auf bedruckbares Objekt finden
-             zTemp = getZkoordinate(Xsujet.get(i), Xsujet.get(i)).get(i).getZ();
-             getSteps((xStart+Xsujet.get(i)), (yStart+Ysujet.get(i)), (zStart+zTemp),1);
+            pt = getZkoordinate(xStart+Xsujet.get(i), yStart+Xsujet.get(i)).get(0);
+             zTemp = pt.getZ();
+             getSteps((xStart+Xsujet.get(i)), (yStart+Ysujet.get(i)),(zStart+zTemp),1);
              xStart = xStart+Xsujet.get(i);
              yStart = yStart+Ysujet.get(i);
-             zStart = zStart+(getZkoordinate(xStart+Xsujet.get(i),yStart+ Ysujet.get(i))).get(i).getZ();
+             zStart = zStart+(pt.getZ());
         }
     }
 
@@ -365,8 +371,6 @@ public class Objektfile_einlesen extends Util {
       // DateiUmbenennen rename = new DateiUmbenennen();
        //rename.RenameFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/");//Pfad ohne dateiname
       
-//        ObjectContainer db=Db4o.openFile("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaximalkorrigiert.txt");
-//147.253174 113.367676 174.822464
      // try {
 //            o.fileEinlesen();
 //            o.saveToDb();
@@ -391,13 +395,13 @@ public class Objektfile_einlesen extends Util {
             Objektfile_einlesen o = new Objektfile_einlesen("C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/BallonMaxV1.txt","C:/Users/david/Desktop/PREN/eiPrint/src/eiPrint/OBJMgmt/data/sujet.txt");
 //            System.out.println( o.getOrigin().get(0));
             //o.getOrigin().get(0).getX();
-           System.out.println( o.getOrigin().get(0));
-           System.out.println();
-//            Kinematik DPOD = new Kinematik();
            // o.getSteps(0.0034228569986112234, 0.001378, 291.4954994853929,1);
-            //o.fileEinlesen();
-            //o.saveToDb();
+         //   o.fileEinlesen();
+         //   o.saveToDb();
             o.sujetEinlesen();
+           System.out.println(o.getOrigin().size());
+           System.out.println( o.getOrigin().get(0));
+           System.out.println(o.getOrigin().get(0).getX());
             o.generiereDruckdaten(o.getOrigin().get(0).getX(), o.getOrigin().get(0).getY(), o.getOrigin().get(0).getZ());
             o.printArrayLists();
         }catch (Exception e){
