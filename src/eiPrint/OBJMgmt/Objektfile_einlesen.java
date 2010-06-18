@@ -49,6 +49,10 @@ public class Objektfile_einlesen extends Util {
     private FileReader fileInSujet;
     private ArrayList<Double> xTemp ;
     private ArrayList<Double> yTemp ;
+    private int oldStepMotor1;
+    private int oldStepMotor2;
+    private int oldStepMotor3;
+
     /**
      * Konstruktor
      *
@@ -76,6 +80,10 @@ public class Objektfile_einlesen extends Util {
         write = new ArrayList<Integer>();
         xTemp = new ArrayList<Double>();
         yTemp = new ArrayList<Double>();
+        oldStepMotor1 = 0;
+        oldStepMotor2 = 0;
+        oldStepMotor3 = 0;
+
         try {
             fileIn = new FileReader(pfad); //.obj file
             fileInSujet = new FileReader(sujet);// sujet.txt file
@@ -211,6 +219,38 @@ public class Objektfile_einlesen extends Util {
         return result;
     }
 
+   /**
+     * Diese Methode erwartet die Koordinaten eines Punktes im Raum und
+     * berechnet wieviele Steps welcher Motor drehen muss und speichert die
+     * Steps in eine ArrayList namens steps
+     * @param x
+     * @param y
+     * @param z
+     */
+    public void getStepsInitailposition(double x, double y, double z,int color)
+    {
+        int stepsMotor1, stepsMotor2, stepsMotor3;
+        int write = 1 ;
+        //Dpod erwarted floats
+        DPOD.x0 = x;
+        DPOD.y0 = y;
+        DPOD.z0 = z;
+        OK = DPOD.delta_calcInverse(DPOD);
+        stepsMotor1 = (int) ((DPOD.theta1) / 0.9);
+        stepsMotor2 = (int) ((DPOD.theta2) / 0.9);
+        stepsMotor3 = (int) ((DPOD.theta3) / 0.9);
+        oldStepMotor1 = stepsMotor1;
+        oldStepMotor2 = stepsMotor2;
+        oldStepMotor3 = stepsMotor3;
+        steps.add(stepsMotor1);
+        steps.add(stepsMotor2);
+        steps.add(stepsMotor3);
+        steps.add(color);
+        steps.add(write);
+        System.out.println(stepsMotor1);
+        System.out.println(stepsMotor2);
+        System.out.println(stepsMotor3);
+    }
     /**
      * Diese Methode erwartet die Koordinaten eines Punktes im Raum und
      * berechnet wieviele Steps welcher Motor drehen muss und speichert die
@@ -227,17 +267,25 @@ public class Objektfile_einlesen extends Util {
         DPOD.y0 = y;
         DPOD.z0 = z;
         OK = DPOD.delta_calcInverse(DPOD);
+        //Schrittberechnung ausgehend von Nullposition
         stepsMotor1 = (int) ((DPOD.theta1) / 0.9);
         stepsMotor2 = (int) ((DPOD.theta2) / 0.9);
         stepsMotor3 = (int) ((DPOD.theta3) / 0.9);
-        steps.add(stepsMotor1);
-        steps.add(stepsMotor2);
-        steps.add(stepsMotor3);
+        oldStepMotor1 = oldStepMotor1- stepsMotor1;
+        oldStepMotor2 = oldStepMotor2- stepsMotor2;
+        oldStepMotor3 = oldStepMotor3-stepsMotor3;
+        steps.add(oldStepMotor1);
+        steps.add(oldStepMotor2);
+        steps.add(oldStepMotor3);
         steps.add(color);
         steps.add(write);
-        System.out.println(stepsMotor1);
-        System.out.println(stepsMotor2);
-        System.out.println(stepsMotor3);
+        System.out.println(oldStepMotor1);
+        System.out.println(oldStepMotor2);
+        System.out.println(oldStepMotor3);
+        oldStepMotor1 = stepsMotor1;
+        oldStepMotor2 = stepsMotor2;
+        oldStepMotor3 = stepsMotor3;
+
     }
 
 
@@ -316,19 +364,29 @@ public class Objektfile_einlesen extends Util {
             System.out.println();
         }
     }
+
+
     
      public void generiereDruckdaten(double xStart,double yStart, double zStart)
     {
 //        double xStart = 0.0;
 //        double yStart = 0.0;
 //        double zStart = 0.0;
-         Point pt = null;
-        for(int i=0; i<Xsujet.size()-1;i++)
+        double zTemp = 0.0;
+        Point pt = null;
+        pt = getZkoordinate(xStart + Xsujet.get(0), yStart + Xsujet.get(0)).get(0);
+        zTemp = pt.getZ();
+        //für das Anfahren der Startposition
+        getStepsInitailposition((xStart+Xsujet.get(0)), (yStart+Ysujet.get(0)),(zStart+zTemp),1);
+        xStart = xStart + Xsujet.get(0);
+        yStart = yStart + Ysujet.get(0);
+        zStart = zStart + (pt.getZ());
+
+        //für die restlichen Punkte des Sujet
+        for(int i=1; i<Xsujet.size()-1;i++)
         {
-            double zTemp =0.0;
-            
             //zugehörige z-Koordinate auf bedruckbares Objekt finden
-            pt = getZkoordinate(xStart+Xsujet.get(i), yStart+Xsujet.get(i)).get(0);
+             pt = getZkoordinate(xStart+Xsujet.get(i), yStart+Xsujet.get(i)).get(0);
              zTemp = pt.getZ();
              getSteps((xStart+Xsujet.get(i)), (yStart+Ysujet.get(i)),(zStart+zTemp),1);
              xStart = xStart+Xsujet.get(i);
@@ -362,6 +420,49 @@ public class Objektfile_einlesen extends Util {
     public ArrayList<Integer> getStepsArray()
     {
         return steps;
+    }
+
+
+    /**
+     * @return the actualStepMotor1
+     */
+    public int getActualStepMotor1() {
+        return oldStepMotor1;
+    }
+
+    /**
+     * @param actualStepMotor1 the actualStepMotor1 to set
+     */
+    public void setActualStepMotor1(int actualStepMotor1) {
+        this.oldStepMotor1 = actualStepMotor1;
+    }
+
+    /**
+     * @return the actualStepMotor2
+     */
+    public int getActualStepMotor2() {
+        return oldStepMotor2;
+    }
+
+    /**
+     * @param actualStepMotor2 the actualStepMotor2 to set
+     */
+    public void setActualStepMotor2(int actualStepMotor2) {
+        this.oldStepMotor2 = actualStepMotor2;
+    }
+
+    /**
+     * @return the actualStepMotor3
+     */
+    public int getActualStepMotor3() {
+        return oldStepMotor3;
+    }
+
+    /**
+     * @param actualStepMotor3 the actualStepMotor3 to set
+     */
+    public void setActualStepMotor3(int actualStepMotor3) {
+        this.oldStepMotor3 = actualStepMotor3;
     }
 
     public static void main(String[] args) {
@@ -409,4 +510,5 @@ public class Objektfile_einlesen extends Util {
       }
 
     }
+
 }
