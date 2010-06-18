@@ -1,7 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Communication;
 
 import java.io.IOException;
@@ -18,6 +15,9 @@ public class Parsedata {
 
     public byte[][] printArray;
 
+    /**
+     * Leerer Konstruktor
+     */
     public Parsedata() {
     }
 
